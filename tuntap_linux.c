@@ -65,7 +65,7 @@ int tuntap_open(tuntap_dev *device,
                 char *device_mask,
                 const char * device_mac,
 		int mtu) {
-  char *tuntap_device = "/dev/net/tun";
+  char *tuntap_device = "/dev/tun";
 #define N2N_LINUX_SYSTEMCMD_SIZE 128
   char buf[N2N_LINUX_SYSTEMCMD_SIZE];
   struct ifreq ifr;
@@ -95,7 +95,7 @@ int tuntap_open(tuntap_dev *device,
   if ( device_mac && device_mac[0] != '\0' )
   {
       /* Set the hw address before bringing the if up. */
-      snprintf(buf, sizeof(buf), "/sbin/ifconfig %s hw ether %s",
+      snprintf(buf, sizeof(buf), "/system/bin/ifconfig %s hw ether %s",
                ifr.ifr_name, device_mac );
       system(buf);
       traceEvent(TRACE_INFO, "Setting MAC: %s", buf);

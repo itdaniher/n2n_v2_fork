@@ -1,0 +1,7 @@
+
+/opt/android-ndk-r10d/build/tools/make-standalone-toolchain.sh --platform=android-5 --install-dir=/home/it/native/android/ --arch=arm --verbose 
+
+openssl$ make CC=/home/it/native/android/bin/arm-linux-androideabi-gcc AR="/home/it/native/android/bin/arm-linux-androideabi-ar r" RANLIB=/home/it/native/android/bin/arm-linux-androideabi-ranlib -j8
+
+n2n_v2_fork$ make -e N2N_ANDROID="yes"
+

@@ -4,9 +4,20 @@ N2N_OSNAME=$(shell uname -p)
 
 ########
 
-CC=gcc
-DEBUG?=-g3
-#OPTIMIZATION?=-O2
+
+ifeq ($(N2N_ANDROID), yes)
+    PREFIX=/home/it/native/android/bin/arm-linux-androideabi-
+    SYSROOT=/home/it/native/android/sysroot
+    SSLDIR=/home/it/native/openssl
+else
+    PREFIX=
+    SYSROOT=
+    SSLDIR=/usr
+endif
+
+CC=$(PREFIX)gcc --sysroot=$(SYSROOT)/
+#DEBUG?=-g3
+OPTIMIZATION?=-O2
 WARN?=-Wall -Wshadow -Wpointer-arith -Wmissing-declarations -Wnested-externs
 
 #Ultrasparc64 users experiencing SIGBUS should try the following gcc options
@@ -18,18 +29,17 @@ N2N_OBJS_OPT=
 LIBS_EDGE_OPT=
 
 N2N_OPTION_AES?="yes"
-#N2N_OPTION_AES=no
 
 ifeq ($(N2N_OPTION_AES), "yes")
     N2N_DEFINES+="-DN2N_HAVE_AES"
-    LIBS_EDGE_OPT+=-lcrypto
+    LIBS_EDGE_OPT+=-lcrypto -L$(SSLDIR)
 endif
 
 ifeq ($(SNM), yes)
     N2N_DEFINES+="-DN2N_MULTIPLE_SUPERNODES"
 endif
 
-CFLAGS+=$(DEBUG) $(OPTIMIZATION) $(WARN) $(OPTIONS) $(PLATOPTS) $(N2N_DEFINES)
+CFLAGS+=$(DEBUG) $(OPTIMIZATION) $(WARN) $(OPTIONS) $(PLATOPTS) $(N2N_DEFINES) -I$(SSLDIR)/include
 
 INSTALL=install
 MKDIR=mkdir -p
@@ -50,7 +60,7 @@ MAN8DIR=$(MANDIR)/man8
 N2N_LIB=n2n.a
 N2N_OBJS=n2n.o n2n_keyfile.o wire.o minilzo.o twofish.o \
          transform_null.o transform_tf.o transform_aes.o \
-         tuntap_freebsd.o tuntap_netbsd.o tuntap_linux.o tuntap_osx.o version.o
+         tuntap_linux.o version.o
 
 ifeq ($(SNM), yes)
 N2N_OBJS+=sn_multiple.o sn_multiple_wire.o 
@@ -96,7 +106,7 @@ endif
 	gzip -c $< > $@
 
 $(N2N_LIB): $(N2N_OBJS)
-	ar rcs $(N2N_LIB) $(N2N_OBJS)
+	$(PREFIX)ar rcs $(N2N_LIB) $(N2N_OBJS)
 #	$(RANLIB) $@
 
 version.o: Makefile

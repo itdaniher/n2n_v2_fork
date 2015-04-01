@@ -32,7 +32,7 @@
 #   define REGISTRATION_TIMEOUT          120
 #else /* #if defined(DEBUG) */
 #   define PURGE_REGISTRATION_FREQUENCY   60
-#   define REGISTRATION_TIMEOUT           (60*20)
+#   define REGISTRATION_TIMEOUT           (60)
 #endif /* #if defined(DEBUG) */
 
 
